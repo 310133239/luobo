@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+</head>
+<style>
+	*{
+		margin: 0;
+		padding: 0;
+	}
+	#wrap{
+		margin: 50px auto;
+		
+	}
+	#box{
+		height: 300px;
+		width: 500px;
+		background: #333;
+		position: relative;
+		margin: 0 auto;
+		overflow: hidden;
+	}
+	ul{
+		list-style:none;
+		overflow: hidden;
+		width: 2500px;
+		position: absolute;
+		left: 0;
+		top: 0;
+	}
+	ul>li{
+		width:500px;
+		height: 300px;
+		float: left;
+		line-height: 300px;
+		color: #fff;
+		text-align: center;
+		font-size: 23px;
+	}
+	ul li{
+		background: pink;
+	}
+	ul li+li{
+		background: red;
+	}
+	ul li+li+li{
+		background: blue;
+	}
+	ul li+li+li+li{
+		background: pink;
+	}
+	ul li+li+li+li+li{
+		background: red;
+	}
+	#pre{
+		top: 150px;
+		left: 0;
+		height: 50px;
+		width: 50px;
+		line-height: 50px;
+		text-align: center;
+		color: #fff;
+		z-index: 1000;
+		position: absolute;
+	}
+	#next{
+		top: 150px;
+		right: 0;
+		height: 50px;
+		width: 50px;
+		line-height: 50px;
+		text-align: center;
+		z-index: 1000;
+		position: absolute;
+		color: #fff;
+	}
+</style>
+<body>
+<section>
+<div id="wrap">
+	<div id="box">
+		<ul >
+			<li>3</li>
+			<li>1</li>
+			<li>2</li>
+			<li>3</li>
+			<li>1</li>
+		</ul>		
+		<div id="pre">←</div>
+		<div id="next">→</div>
+	</div>
+</div>
+</section>
+<script type="text/javascript" src="js/jq.js"></script>
+<script type="text/javascript">
+(function(root,factory){
+	// 先写一个jq以后在增加amd模式sea.js等
+	root.luobo=factory(window.zepto || window.jQuery || $)
+})(window,function($){
+	// 挂载在jq上
+	$.fn.luobo=function(opt){
+			opt.ele=opt.ele||$(this);
+			var ll=new LuoboFn();
+			var opt=$.extend({},opt);
+			ll.init(opt);
+			return this;
+	}
+	// 构造函数
+	function LuoboFn(){
+		this.setting={
+			ele:"#box ul",
+			autopaly:2000,
+			numMax:3
+		},
+		this.timer=null;
+		this.num=1;
+		//this.width=500;
+		
+	}
+	LuoboFn.prototype={
+		init:function(opt){
+			this.setting=$.extend({},opt);
+			debugger
+			$(this.setting.ele).css("left",-this.setting.width)
+			var  _this=this;
+			$("#next").click(function(){
+				_this.next(_this)
+			});
+			$("#pre").click(function(){
+				_this.pre(_this);
+			});
+			$("#pre,#next").on("mouseover",function(){
+				clearInterval(_this.timer);
+			})
+			$("#pre,#next").on("mouseout",function(){
+				
+				_this.autoPlay();
+			})
+			this.autoPlay();
+		},
+		autoPlay:function(){
+			var _this=this;
+			clearInterval(_this.timer);
+			_this.timer=setInterval(function(){
+				_this.num++;
+				_this.play();
+			},this.setting.autopaly)
+		},
+		play:function(){
+			var _this=this;
+			var left=-_this.setting.width*_this.num;
+			$(_this.setting.ele).stop().animate({left:left},function(){
+					if (_this.num>_this.setting.numMax) {
+						$(_this.setting.ele).css({"left":-_this.setting.width});
+						_this.num=1;
+					}
+					if (_this.num<1) {
+						$(_this.setting.ele).css({"left":-_this.setting.width*_this.setting.numMax});
+						_this.num=_this.setting.numMax;
+					}
+
+			});
+		},
+		next:function(_this){
+			var _this=_this;
+			clearInterval(_this.timer);
+			_this.num++;
+			_this.play();
+		},
+		pre:function(_this){
+			var _this=_this;
+			clearInterval(_this.timer);
+			_this.num--;
+			_this.play();
+		}
+	}
+	$("#box").luobo({
+		ele:"#box ul",
+		autopaly:2000,
+		numMax:3,
+		width:500,
+	})
+
+
+})
+
+
+</script>
+</body>
+</html>	
