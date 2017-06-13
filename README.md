@@ -15,3 +15,12 @@
 	</div>
 </div>
 ```
+```
+js调用
+$("#box").luobo({
+		ele:"#box ul",
+		autopaly:2000,
+		numMax:3,
+		width:500,
+	})
+```
